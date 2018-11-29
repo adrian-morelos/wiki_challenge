@@ -87,4 +87,6 @@ Both `Query Modes` implementations includes Title, a link to the article, and th
 #### 8) Your module should include functional tests and relevant documentation.
 Module Coding standard checked with [Coder Sniffer](https://www.drupal.org/project/coder) Version 8.2.12.
 
-*@todo* Unit testing of the module will be include in the next release.
+Module Tested on Drupal 8.6.3 using a basic [Drupal VM](https://www.drupalvm.com/) installation.
+
+*@todo*  - Unit testing of the module will be include in the next release.
