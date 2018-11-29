@@ -32,7 +32,7 @@ class DatabaseApiQueryMode implements QueryModeInterface {
       ->fields('a', ['nid'])
       ->condition('title', '%' . $connection->escapeLike($keys) . '%', 'LIKE')
       ->condition('type', WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE);
-    $nids = $query->execute()->fetchAllKeyed(0,0);
+    $nids = $query->execute()->fetchAllKeyed(0, 0);
     if (empty($nids)) {
       return [];
     }

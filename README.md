@@ -44,11 +44,14 @@ $query = $connection->select('node_field_data', 'a')
          ->condition('type', WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE);
 $nids = $query->execute()->fetchAllKeyed(0,0);
  ```
-    Implementation: `\Drupal\wiki_challenge\QueryMode\DatabaseApiQueryMode`.
+ 
+Implementation: `\Drupal\wiki_challenge\QueryMode\DatabaseApiQueryMode`.
+
   2. *Entity API - Entity Query* basically search by title using Entity API - Entity Query:
   
     `$query = \Drupal::entityQuery('node')->condition('title', $keys, 'CONTAINS');`
-    Implementation: `\Drupal\wiki_challenge\QueryMode\EntityApiQueryMode`.
+    
+Implementation: `\Drupal\wiki_challenge\QueryMode\EntityApiQueryMode`.
 
 #### 5) If no parameter is provided, then the page displays wikipedia articles for the term provided in the 'Search' form field.
 Since that "search" form field on the `WikiForm` implementation takes the user to the route `/wiki/{search_tems}` on form submit(being `{search_tems}` the input values provided by the users) in this implementation Search form field will always get the value from the route parameter, example:
@@ -67,11 +70,14 @@ Currently there are two `query Modes` implementations:
   1. *Render as snippets* basically render the entities using a custom theme: 
   
     `$results[] = ['#theme' => 'wiki_challenge_search_result_item', '#entity' => $entity]`
-    Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsSnippetsRenderMode`.
+
+Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsSnippetsRenderMode`.
+
   2. *Render as view modes* basically render the entities using a custom *view mode* and *view builder* service from *entity type Manager*:
   
     `$results[] = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $view_mode);`
-    Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsViewModesRenderMode`.
+
+Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsViewModesRenderMode`.
 
 #### 7) Search results should include the Title, a link to the article, and the extract for the article.
 Both `Query Modes` implementations includes Title, a link to the article, and the extract for the article. For instance:
