@@ -9,7 +9,7 @@ On the *Wiki search page* (`/wiki`), you can search nodes of type **'Wikipedia A
 
 Module Coding standard checked with [Coder Sniffer](https://www.drupal.org/project/coder) Version 8.2.12.
 
-Schreenshot:
+Wiki Page Overview Screenshot:
 
 ![Wiki challenge Search Page](screenshot/wiki-challenge.png)
 
