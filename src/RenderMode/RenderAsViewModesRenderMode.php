@@ -52,7 +52,7 @@ class RenderAsViewModesRenderMode implements RenderModeInterface {
     foreach ($entities as $entity) {
       $bundle = $entity->bundle();
       $view_mode = 'node.' . $bundle . '_search_result';
-      $results[] = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $view_mode);;
+      $results[] = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $view_mode);
     }
     return $results;
   }

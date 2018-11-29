@@ -88,13 +88,6 @@ class WikiForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, $parameter = NULL) {
     $langcode = $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-    $search_term = '';
-    if (isset($parameter)) {
-      $search_term = $parameter;
-    }
-    elseif ($search_value = $this->getRequest()->get('keys')) {
-      $search_term = $search_value;
-    }
     $keys_title = $this->t(
       'Enter the terms you wish to search for.',
       [],
@@ -109,6 +102,7 @@ class WikiForm extends FormBase {
       ],
     ];
     // Field: keys.
+    $search_term = isset($parameter) ? $parameter : '';
     $form['search']['keys'] = [
       '#type' => 'search',
       '#title' => $this->t('Search', [], ['langcode' => $langcode]),
