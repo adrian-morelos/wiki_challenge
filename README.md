@@ -26,6 +26,7 @@ Since that `/wiki/{parameter}` ro route is being implemented by a Form Controlle
 The `WikiForm` implementation has decoupled the way how is the query and the way how is info ins presented from the form implementation itself. Using [Services Tag and the Service Collector](https://www.drupal.org/docs/8/api/services-and-dependency-injection/service-tags) The form have included two select fields to set how the search query should be performed and how the result should be rendered respectively:
 
 ![Search form field](screenshot/additional-fields.png)
+
 More details about `Query Modes` and `Render Modes` implementations in points #4 and #6 below.
 
 #### 3) A user can either enter a value in the form field or provide a url parameter (/wiki/[parameter]).
@@ -58,17 +59,20 @@ $items = $render_mode->doRender($entities);
 ```
 Currently there are two `query Modes` implementations:
   1. *Render as snippets* basically render the entities using a custom theme: 
+  
     `$results[] = ['#theme' => 'wiki_challenge_search_result_item', '#entity' => $entity]`
     Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsSnippetsRenderMode`.
   2. *Render as view modes* basically render the entities using a custom *view mode* and *view builder* service from *entity type Manager*:
+  
     `$results[] = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $view_mode);`
     Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsViewModesRenderMode`.
 
 #### 7) Search results should include the Title, a link to the article, and the extract for the article.
-Both `query Modes` implementations include Title, a link to the article, and the extract for the article. Example:
+Both `Query Modes` implementations includes Title, a link to the article, and the extract for the article. For instance:
 
 ![Search form field](screenshot/result-items.png)
 
 #### 8) Your module should include functional tests and relevant documentation.
-Module Coding standard checked with [Coder Sniffer](https://www.drupal.org/project/coder) Version 8.2.12
+Module Coding standard checked with [Coder Sniffer](https://www.drupal.org/project/coder) Version 8.2.12.
+
 *@todo* Unit testing of the module will be include in the next release.
