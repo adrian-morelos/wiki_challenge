@@ -59,7 +59,7 @@ Since that "search" form field on the `WikiForm` implementation takes the user t
 ![Search form field](screenshot/search-field.png)
 
 #### 6) The page should display the term that is being searched.
-Once the query is resolve by the `Query Mode` class the result is passed to one of the `Render Mode` class, reducing the entity search/render process two two lines:
+Once the query is resolve by the `Query Mode` class the result is passed to one of the `Render Mode` class, reducing the entity search/render process to two lines:
  ```
  // Perform the Search Query.
 $entities = $query_mode->doSearch($search_term);
