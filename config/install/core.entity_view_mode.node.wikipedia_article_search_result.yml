@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.wikipedia_article_search_result
+label: 'Wikipedia Article Search Result'
+targetEntityType: node
+cache: true

@@ -1,0 +1,6 @@
+wiki_challenge.wiki:
+  title: 'Wiki Challenge'
+  route_name: 'wiki_challenge.wiki'
+  parent: 'system.admin'
+  description: 'Wikipedia Article Search.'
+  weight: -9

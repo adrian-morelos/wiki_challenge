@@ -1,0 +1,9 @@
+wiki_challenge.wiki:
+  path: '/wiki/{parameter}'
+  defaults:
+    _form: '\Drupal\wiki_challenge\Form\WikiForm'
+    _title: 'Wiki Challenge'
+    parameter: NULL
+  requirements:
+    _permission: 'access content'
+    parameter: '[^.]+'

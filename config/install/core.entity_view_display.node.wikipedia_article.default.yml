@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.wikipedia_article.body
+    - node.type.wikipedia_article
+  module:
+    - text
+    - user
+id: node.wikipedia_article.default
+targetEntityType: node
+bundle: wikipedia_article
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true

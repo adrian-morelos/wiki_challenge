@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.wikipedia_article_search_result
+    - field.field.node.wikipedia_article.body
+    - node.type.wikipedia_article
+  module:
+    - text
+    - user
+id: node.wikipedia_article.wikipedia_article_search_result
+targetEntityType: node
+bundle: wikipedia_article
+mode: wikipedia_article_search_result
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true

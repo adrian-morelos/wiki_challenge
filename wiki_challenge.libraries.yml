@@ -1,0 +1,11 @@
+wiki_search:
+  version: VERSION
+  css:
+    theme:
+      css/wiki_challenge.css: {}
+
+toolbar:
+  version: VERSION
+  css:
+    theme:
+      css/wiki_challenge.icons.css: {}

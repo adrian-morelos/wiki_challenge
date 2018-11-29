@@ -1,0 +1,20 @@
+/**
+ * @file
+ * Wiki Challenge toolbar icon styling.
+ */
+
+/* Bar styling (first row), currently unused. */
+.toolbar-bar .toolbar-icon-wiki-challenge-wiki:before {
+    background-image: url("search.svg");
+}
+.toolbar-bar .toolbar-icon-wiki-challenge-wiki:active:before {
+    background-image: url("search.svg");
+}
+
+/* Tray styling (second row) */
+.toolbar-tray .toolbar-icon.toolbar-icon-wiki-challenge-wiki:before {
+    background-image: url("search.svg");
+}
+.toolbar-tray .toolbar-icon.toolbar-icon-wiki-challenge-wiki:active:before {
+    background-image: url("search.svg");
+}

@@ -1,0 +1,207 @@
+<?php
+
+/**
+ * @file
+ * Defines common functionality for all the "Wiki Challenge" sub-modules.
+ */
+
+use Drupal\user\EntityOwnerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+
+/**
+ * Defines the bundle used for store Wikipedia Articles.
+ */
+define('WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE', 'wikipedia_article');
+
+/**
+ * Implements hook_help().
+ */
+function wiki_challenge_help($route_name) {
+  switch ($route_name) {
+    case 'help.page.wiki_challenge':
+      $message = t("<p>Welcome to the Wiki Article help page!. Once the <strong>'Wiki Challenge'</strong> module is installed, a type of content called <strong>'Wikipedia Article'</strong> is automatically added and configured along with a view mode called <strong>'Wikipedia Article Search Result'</strong>.</p><p>After that <strong>wiki challenge's</strong> module is installed 30 nodes of type <strong>'Wikipedia Article'</strong> are automatically generated using the service <strong>'wiki_challenge.generate.content'</strong> implemented on this module(This logic can be found on the implementation of the hook: <strong>'hook_modules_installed'</strong> of the Wiki Challenge's module)</p><p>On the <a href=':wiki_page'>Wiki search page</a>, you can search nodes of type <strong>'Wikipedia Articles'</strong> that contains a given parameter in its title, either searching by terms using the search box below or by providing a search term on the URL by following the route pattern: <strong>/wiki/[search_term]</strong>.</p>", [':wiki_page' => \Drupal::url('wiki_challenge.wiki')]);
+      return $message;
+  }
+  return NULL;
+}
+
+/**
+ * Implements hook_toolbar_alter().
+ */
+function wiki_challenge_toolbar_alter(&$items) {
+  $items['administration']['#attached']['library'][] = 'wiki_challenge/toolbar';
+}
+
+/**
+ * Implements hook_theme().
+ */
+function wiki_challenge_theme() {
+  return [
+    'wiki_challenge_search_result_item' => [
+      'variables' => [
+        'entity' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Process variables for wiki-challenge-search-result-item.html.twig.
+ *
+ * @param array $variables
+ *   The array of variables passed by reference.
+ */
+function template_preprocess_wiki_challenge_search_result_item(array &$variables = []) {
+  /* @var $entity \Drupal\Core\Entity\EntityInterface */
+  $entity = $variables['entity'];
+  $summary_field_name = 'body';
+  if (($entity instanceof FieldableEntityInterface) && $entity->hasField($summary_field_name)) {
+    $summary_field = $entity->get($summary_field_name);
+    $excerpt = wiki_challenge_get_excerpt($summary_field);
+  }
+  else {
+    $excerpt = NULL;
+  }
+  $variables['snippet'] = ['#markup' => $excerpt];
+  $variables['url'] = $entity->toUrl()->toString();
+  $variables['title'] = $entity->label();
+
+  $info = [];
+  if ($entity instanceof EntityOwnerInterface) {
+    $info['user'] = $entity->getOwner()->label();
+  }
+  if (isset($entity->created)) {
+    $info['date'] = \Drupal::service('date.formatter')->format($entity->created->value, 'short');
+  }
+  // Provide separated and grouped meta information..
+  $variables['info_split'] = $info;
+  $variables['info'] = implode(' - ', $info);
+  // Add Class for styles purpose.
+  $variables['attributes']['class'][] = $entity->bundle();
+  // Add article ARIA role.
+  $variables['attributes']['role'] = 'article';
+}
+
+/**
+ * Implements template_preprocess_node.
+ *
+ * @param array $variables
+ *   The array of variables passed by reference.
+ */
+function wiki_challenge_preprocess_node(array &$variables = []) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  if (!$node) {
+    return NULL;
+  }
+  if ($node->bundle() != WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE) {
+    return NULL;
+  }
+  $target_view_mode = 'node.' . WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE . '_search_result';
+  if (!isset($variables['view_mode']) || ($variables['view_mode'] != $target_view_mode)) {
+    return NULL;
+  }
+  $excerpt = wiki_challenge_get_excerpt($node->get('body'));
+  $variables['content']['body'] = ['#markup' => $excerpt];
+}
+
+/**
+ * Get the excerpt from a body field.
+ *
+ * @param \Drupal\Core\Field\FieldItemListInterface $summary_field
+ *   The summary field.
+ *
+ * @return string
+ *   The entity excerpt.
+ */
+function wiki_challenge_get_excerpt(FieldItemListInterface $summary_field = NULL) {
+  if (!$summary_field) {
+    return NULL;
+  }
+  $body = $summary_field->value ?? NULL;
+  $format = $summary_field->format ?? 'plain_text';
+  $summary = $summary_field->summary ?? NULL;
+  $excerpt = !empty($summary) ? $summary : $body;
+  // Ensure max length of the summary on excerpts.
+  if (!empty($excerpt)) {
+    $excerpt = text_summary($excerpt, $format, $size = 200);
+  }
+  return $excerpt;
+}
+
+/**
+ * Implements install for a given node bundle.
+ *
+ * @param string $bundle
+ *   The node bundle.
+ */
+function wiki_challenge_install_bundle($bundle = NULL) {
+  if (empty($bundle)) {
+    return NULL;
+  }
+  $state = Drupal::state();
+  // Do not allow the locked content type to be deleted.
+  $locked = $state->get('node.type.locked');
+  $locked[$bundle] = $bundle;
+  $state->set('node.type.locked', $locked);
+}
+
+/**
+ * Implements uninstall for a given node bundle.
+ *
+ * @param string $bundle
+ *   The node bundle.
+ * @param bool $remove_data
+ *   The flag: Remove Data.
+ */
+function wiki_challenge_uninstall_bundle($bundle = NULL, $remove_data = FALSE) {
+  if (empty($bundle)) {
+    return NULL;
+  }
+  $state = \Drupal::state();
+  // Allow bundle to be deleted.
+  $locked = $state->get('node.type.locked');
+  unset($locked[$bundle]);
+  $state->set('node.type.locked', $locked);
+  if (!$remove_data) {
+    // Stop here.
+    return NULL;
+  }
+  // Delete custom bundle nodes when uninstalling.
+  $query = \Drupal::entityQuery('node')->condition('type', $bundle);
+  $ids = $query->execute();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  if (!empty($ids)) {
+    $storage_handler = $entity_type_manager->getStorage('node');
+    $entities = $storage_handler->loadMultiple($ids);
+    $storage_handler->delete($entities);
+  }
+  // Delete the custom bundle.
+  $content_type = $entity_type_manager->getStorage('node_type')->load($bundle);
+  if ($content_type) {
+    $content_type->delete();
+  }
+  // Remove custom View Mode.
+  $view_mode_id = 'node.' . $bundle . '_search_result';
+  $view_mode = $entity_type_manager->getStorage('entity_view_mode')->load($view_mode_id);
+  if ($view_mode) {
+    $view_mode->delete();
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ *
+ * Perform necessary actions after modules are installed: For the purpose of
+ * this challenge generate 40 nodes of type Wiki articles after
+ * the module 'wiki_challenge' is installed.
+ *
+ * @param array $modules
+ *   An array of the modules that were installed.
+ */
+function wiki_challenge_modules_installed(array $modules = []) {
+  if (in_array('wiki_challenge', $modules)) {
+    \Drupal::service('wiki_challenge.generate.content')->generateContent($num_nodes = 30);
+  }
+}

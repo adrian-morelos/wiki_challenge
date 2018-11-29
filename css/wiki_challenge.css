@@ -1,0 +1,46 @@
+.search-result-items {
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -.5rem;
+    margin-left: -.5rem;
+    justify-content: center;
+}
+
+.search-result-items .wikipedia_article,
+.search-result-items .node--type-wikipedia-article {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 27%;
+    max-width: 27%;
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    margin-right: .75rem;
+    margin-left: .75rem;
+    margin-top: .75rem;
+    margin-bottom: .75rem;
+    background-color: rgba(86,61,124,.15);
+    border: 1px solid rgba(86,61,124,.2);
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.search-result-items .node--type-wikipedia-article {
+    padding-bottom: .75rem;
+}
+
+@media (max-width: 400px) {
+    .search-result-items {
+        display: block;
+    }
+}

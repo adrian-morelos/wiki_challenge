@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Install file for wiki_challenge.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * We don't want users to be able to delete our order content
+ * type. So therefore we have to tell Drupal that this is the case. This
+ * can't be done in the content type's configuration YAML file, so we have to
+ * do it in code, here.
+ *
+ * @ingroup wiki_challenge
+ */
+function wiki_challenge_install() {
+  // Do not allow the locked content type to be deleted.
+  wiki_challenge_install_bundle(WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE);
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Our content types will live on in the Drupal installation, even after this
+ * module is uninstalled. This is a good thing, since it allows the user to
+ * make decisions about their fate. Therefore we should give the user the
+ * option of deleting them.
+ *
+ * Since we told Drupal that our order is locked, we now have
+ * to tell it to unlock.
+ *
+ * @ingroup wiki_challenge
+ */
+function wiki_challenge_uninstall() {
+  // Allow bundle to be deleted and optionally remove the bundle and its data.
+  wiki_challenge_uninstall_bundle(WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE, TRUE);
+}
