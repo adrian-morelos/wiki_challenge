@@ -73,7 +73,7 @@ Currently there are two `query Modes` implementations:
 
 Implementation: `\Drupal\wiki_challenge\RenderMode\RenderAsSnippetsRenderMode`.
 
-  2. *Render as view modes* basically render the entities using a custom *view mode* and *view builder* service from *entity type Manager*:
+  2. *Render as view modes* basically render the entities using a custom *view mode* and *view builder* service from the *entity type Manager*:
   
     `$results[] = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $view_mode);`
 
