@@ -16,10 +16,10 @@ Schreenshot:
 #### Wiki Challenge Documentation.
 
 #### 1) Loads a page at /wiki which explains what this page does.
-To solve this point *Wiki Challenge's* module defines a route using the path `/wiki/{parameter}` implemented by a Wiki Form class(`\Drupal\wiki_challenge\Form\WikiForm`). The definition of this route can be found in module route config file: `wiki_challenge.routing.yml`.
+To solve this point *Wiki Challenge's* module defines a route using the path `/wiki/{parameter}` implemented by a Wiki Form class(`\Drupal\wiki_challenge\Form\WikiForm`). The definition of this route can be found in module's route config file: `wiki_challenge.routing.yml`.
 
 #### 2) The page should include a 'Search' form field.
-Since that `/wiki/{parameter}` ro route is being implemented by a Form Controller, the form includes an open text-input field to search by terms:
+Since that `/wiki/{parameter}` route is being implemented by a Form Controller, the form includes an open text-input field to search by terms:
 
 ![Search form field](screenshot/keywords.png)
 
