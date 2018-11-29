@@ -1,4 +1,4 @@
-# Wiki challenge Module
+# Wiki challenge - Drupal 8 Module.
 Wiki Challenge module implementation, which defines functionalities to search nodes of type 'Wikipedia Articles' that contains a given search parameter in its title, either searching by terms using the search box below or by providing a search term on the URL by following the route pattern: /wiki/[search_term].
 
 Once the **'Wiki Challenge'** module is installed, a type of content called **'Wikipedia Article'** is automatically added and configured along with a view mode called **'Wikipedia Article Search Result'**.
