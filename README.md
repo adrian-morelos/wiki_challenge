@@ -35,9 +35,11 @@ The `WikiForm` takes the value from the Search field by default from the route p
 The `WikiForm` takes the search tems or parameters from the route `{search_tems}` and perform an query agains the database using the `Query Mode` selected, Currently there are two `query Mode` implementations:
 
   1. *Database API - Static Query* basically search by title using Static Query: 
+  
     `$query = \Drupal::database()->query("SELECT id, example FROM {mytable}");`
     Implementation: `\Drupal\wiki_challenge\QueryMode\DatabaseApiQueryMode`.
   2. *Entity API - Entity Query* basically search by title using Entity API - Entity Query:
+  
     `$query = \Drupal::entityQuery('node')->condition('title', $keys, 'CONTAINS');`
     Implementation: `\Drupal\wiki_challenge\QueryMode\EntityApiQueryMode`.
 
