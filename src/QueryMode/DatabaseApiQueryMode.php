@@ -27,14 +27,12 @@ class DatabaseApiQueryMode implements QueryModeInterface {
    * {@inheritdoc}
    */
   public function doSearch($keys = NULL) {
-    $query = \Drupal::entityQuery('node')
-      ->condition('status', NodeInterface::PUBLISHED)
+    $connection = \Drupal::database();
+    $query = $connection->select('node_field_data', 'a')
+      ->fields('a', ['nid'])
+      ->condition('title', '%' . $connection->escapeLike($keys) . '%', 'LIKE')
       ->condition('type', WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE);
-    // By Default return all the wiki articles if the search keys are empty.
-    if (!empty($keys)) {
-      $query->condition('title', $keys, 'CONTAINS');
-    }
-    $nids = $query->execute();
+    $nids = $query->execute()->fetchAllKeyed(0,0);
     if (empty($nids)) {
       return [];
     }
