@@ -28,7 +28,7 @@ function wiki_challenge_install() {
  * make decisions about their fate. Therefore we should give the user the
  * option of deleting them.
  *
- * Since we told Drupal that our order is locked, we now have
+ * Since we told Drupal that our wikipedia_article bundle is locked, we now have
  * to tell it to unlock.
  *
  * @ingroup wiki_challenge
