@@ -8,7 +8,7 @@
 /**
  * Implements hook_install().
  *
- * We don't want users to be able to delete our order content
+ * We don't want users to be able to delete our wikipedia_article content
  * type. So therefore we have to tell Drupal that this is the case. This
  * can't be done in the content type's configuration YAML file, so we have to
  * do it in code, here.
