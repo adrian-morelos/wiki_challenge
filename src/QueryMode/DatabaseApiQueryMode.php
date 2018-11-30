@@ -2,8 +2,6 @@
 
 namespace Drupal\wiki_challenge\QueryMode;
 
-use Drupal\node\NodeInterface;
-
 /**
  * The Database API Query Mode implementation.
  */

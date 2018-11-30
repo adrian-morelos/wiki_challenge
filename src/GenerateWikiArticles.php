@@ -6,6 +6,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -61,6 +62,13 @@ final class GenerateWikiArticles {
   protected $entityTypeManager;
 
   /**
+   * The logger channel.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
    * Generate Wiki Articles construct.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -71,13 +79,16 @@ final class GenerateWikiArticles {
    *   The messenger service.
    * @param \Drupal\Core\Database\Connection $database
    *   The database service.
+   * @param \Drupal\Core\Logger\LoggerChannelInterface $logger_channel
+   *   The 'wiki_challenge' logger channel.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, MessengerInterface $messenger, Connection $database) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, MessengerInterface $messenger, Connection $database, LoggerChannelInterface $logger_channel) {
     $this->entityTypeManager = $entity_type_manager;
     $this->nodeStorage = $entity_type_manager->getStorage('node');
     $this->languageManager = $language_manager;
     $this->messenger = $messenger;
     $this->database = $database;
+    $this->logger = $logger_channel;
   }
 
   /**
@@ -109,10 +120,14 @@ final class GenerateWikiArticles {
       'title_length' => 7,
     ];
     // Generate nodes.
+    $items_added = 0;
     for ($i = 1; $i <= $config['num']; $i++) {
-      $this->addNode($config);
+      $result = $this->addNode($config);
+      if ($result != FALSE) {
+        $items_added += 1;
+      }
     }
-    $this->messenger->addMessage($this->formatPlural($config['num'], '1 node created of type @bundle.', 'Finished creating @count nodes of type @bundle.', ['@bundle' => $config['type']]));
+    $this->messenger->addMessage($this->formatPlural($items_added, '1 node created of type @bundle.', 'Finished creating @count nodes of type @bundle.', ['@bundle' => $config['type']]));
   }
 
   /**
@@ -120,6 +135,10 @@ final class GenerateWikiArticles {
    *
    * @param array $config
    *   The config used to generate the nodes.
+   *
+   * @return int|bool
+   *   SAVED_NEW, SAVED_UPDATED when the operation was completed,
+   *   Otherwise FALSE.
    */
   protected function addNode(array &$config = []) {
     if (!isset($config['time_range'])) {
@@ -128,6 +147,7 @@ final class GenerateWikiArticles {
     $users = $config['users'];
     $delta = array_rand($users);
     $uid = $users[$delta];
+    $request_time = \Drupal::time()->getRequestTime();
     $node = $this->nodeStorage->create([
       'nid' => NULL,
       'type' => $config['type'],
@@ -136,14 +156,23 @@ final class GenerateWikiArticles {
       'revision' => mt_rand(0, 1),
       'status' => TRUE,
       'promote' => mt_rand(0, 1),
-      'created' => REQUEST_TIME - mt_rand(0, $config['time_range']),
+      'created' => $request_time - mt_rand(0, $config['time_range']),
       'langcode' => $config['langcode'],
     ]);
     // Populate all fields with sample values.
-    $this->populateFields($node);
-    // See devel_generate_node_insert() for actions that happen before and after
-    // this save.
-    $node->save();
+    if (!$this->populateFields($node)) {
+      return FALSE;
+    }
+    try {
+      // Save node.
+      return $node->save();
+    }
+    catch (\Exception $e) {
+      // Add a log entry.
+      $this->logger->error($e->getMessage());
+      // Stop here.
+      return FALSE;
+    }
   }
 
   /**
@@ -177,14 +206,29 @@ final class GenerateWikiArticles {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to be enriched with sample field values.
+   *
+   * @return bool
+   *   TRUE if the operation was completed, Otherwise FALSE.
    */
   public function populateFields(EntityInterface $entity) {
     $properties = [
       'entity_type' => $entity->getEntityType()->id(),
       'bundle' => $entity->bundle()
     ];
-    /** @var \Drupal\field\FieldConfigInterface[] $instances */
-    $instances = $this->entityTypeManager->getStorage('field_config')->loadByProperties($properties);
+    try {
+      /** @var \Drupal\field\FieldConfigInterface[] $instances */
+      $instances = $this->entityTypeManager->getStorage('field_config')->loadByProperties($properties);
+    }
+    catch (\Exception $e) {
+      // Add a log entry.
+      $this->logger->error($e->getMessage());
+      // Stop here.
+      return FALSE;
+    }
+    if (empty($instances)) {
+      // Stop here.
+      return TRUE;
+    }
     foreach ($instances as $instance) {
       $field_storage = $instance->getFieldStorageDefinition();
       $max = $cardinality = $field_storage->getCardinality();
@@ -193,8 +237,11 @@ final class GenerateWikiArticles {
         $max = rand(1, 3);
       }
       $field_name = $field_storage->getName();
-      $entity->$field_name->generateSampleItems($max);
+      if (isset($entity->$field_name)) {
+        $entity->$field_name->generateSampleItems($max);
+      }
     }
+    return TRUE;
   }
 
 }
