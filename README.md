@@ -89,4 +89,11 @@ Module Coding standard checked with [Coder Sniffer](https://www.drupal.org/proje
 
 Module Tested on Drupal 8.6.3 using a basic [Drupal VM](https://www.drupalvm.com/) installation.
 
-*@todo*  - Unit testing of the module will be include in the next release.
+Functional tests included for two scenarios:
+
+1. Tests that the search path '/wiki/{parameter}' works.
+2. Tests Wiki page Search result with exact phrase.
+
+Implementation: `\Drupal\wiki_challenge\Tests\Functional\WikiChallengeSearchPageTest`.
+
+Thanks!.
