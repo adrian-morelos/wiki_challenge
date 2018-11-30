@@ -10,7 +10,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 
 /**
- * Defines the bundle used for store Wikipedia Articles.
+ * Defines the bundle used to store Wikipedia Articles.
  */
 define('WIKI_CHALLENGE_WIKIPEDIA_ARTICLE_BUNDLE', 'wikipedia_article');
 
