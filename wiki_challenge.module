@@ -194,7 +194,7 @@ function wiki_challenge_uninstall_bundle($bundle = NULL, $remove_data = FALSE) {
  * Implements hook_modules_installed().
  *
  * Perform necessary actions after modules are installed: For the purpose of
- * this challenge generate 40 nodes of type Wiki articles after
+ * this challenge generate 30 nodes of type Wiki articles after
  * the module 'wiki_challenge' is installed.
  *
  * @param array $modules
