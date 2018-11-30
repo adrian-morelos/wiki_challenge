@@ -32,7 +32,7 @@ class WikiChallengeSearchPageTest extends BrowserTestBase {
     // Test search path with parameters.
     $path = 'wiki/love+pizza';
     $this->drupalGet($path);
-    $this->assertText(t('Search term(s): @terms', ['@terms' => 'love pizza']));
+    $this->assertText(t('Search term(s): @terms.', ['@terms' => 'love pizza']));
     // Test search path with no parameters.
     $path = 'wiki';
     $this->drupalGet($path);
@@ -61,7 +61,7 @@ class WikiChallengeSearchPageTest extends BrowserTestBase {
     $this->drupalCreateNode($settings);
     $this->drupalPostForm('wiki/love+pizza', $edit, t('Search'));
     // Test search result title.
-    $this->assertText(t('Search term(s): @term', ['@term' => 'love pizza']));
+    $this->assertText(t('Search term(s): @terms.', ['@terms' => 'love pizza']));
     // Test if the item(By the phrase that contains) is present on the result.
     $this->assertText(t('love pizza body content'));
   }
