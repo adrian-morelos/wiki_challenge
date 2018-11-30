@@ -34,7 +34,13 @@ class DatabaseApiQueryMode implements QueryModeInterface {
     if (empty($nids)) {
       return [];
     }
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    try {
+      $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    }
+    catch (\Exception $e) {
+      // Stop here.
+      return [];
+    }
     // Load multiple nodes.
     return $node_storage->loadMultiple($nids);
   }
